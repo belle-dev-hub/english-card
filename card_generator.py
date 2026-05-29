@@ -15,12 +15,17 @@ _UD_PATHS = [
     "C:/Windows/Fonts/UDDigitalKyokashoN-R.ttf",
 ]
 
-# fontsフォルダのパス（このファイルと同じ場所にあるfontsフォルダ）
-_FONTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
+# フォントファイルのパス（このファイルと同じ場所）
+_FONTS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def _f(filename):
-    """fontsフォルダ内のフォントファイルのパスを返す"""
-    return os.path.join(_FONTS_DIR, filename)
+    """フォントファイルのパスを返す（fontsサブフォルダも探す）"""
+    # まずルートを探す
+    root_path = os.path.join(_FONTS_DIR, filename)
+    if os.path.exists(root_path):
+        return root_path
+    # 次にfontsサブフォルダを探す
+    return os.path.join(_FONTS_DIR, "fonts", filename)
 
 FONT_CATALOG = {
     "UD デジタル教科書体": _UD_PATHS,
@@ -40,9 +45,13 @@ FONT_CATALOG = {
     ],
     "Nunito (丸くて読みやすい)": [
         _f("Nunito-Regular.ttf"),
+        _f("Nunito-VariableFont_wght.ttf"),
+        _f("Nunito-Italic-VariableFont_wght.ttf"),
     ],
     "Open Sans (スッキリ標準)": [
         _f("OpenSans-Regular.ttf"),
+        _f("OpenSans-VariableFont_wdth,wght.ttf"),
+        _f("OpenSans-Italic-VariableFont_wdth,wght.ttf"),
         "/System/Library/Fonts/Supplemental/Arial.ttf",
         "C:/Windows/Fonts/arial.ttf",
     ],
