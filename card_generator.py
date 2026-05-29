@@ -25,25 +25,24 @@ def _f(filename):
 FONT_CATALOG = {
     "UD デジタル教科書体": _UD_PATHS,
     "Schoolbell (学校ノート風)": [
-        _f("Schoolbell/Schoolbell-Regular.ttf"),
+        _f("Schoolbell-Regular.ttf"),
     ],
     "Comic Neue (コミック風)": [
-        _f("Comic_Neue/ComicNeue-Bold.ttf"),
-        _f("Comic_Neue/ComicNeue-Regular.ttf"),
+        _f("ComicNeue-Bold.ttf"),
         "/System/Library/Fonts/Supplemental/Comic Sans MS.ttf",
         "C:/Windows/Fonts/comic.ttf",
     ],
     "Patrick Hand (手書き風)": [
-        _f("Patrick_Hand/PatrickHand-Regular.ttf"),
+        _f("PatrickHand-Regular.ttf"),
     ],
     "Indie Flower (かわいい手書き)": [
-        _f("Indie_Flower/IndieFlower-Regular.ttf"),
+        _f("IndieFlower-Regular.ttf"),
     ],
     "Nunito (丸くて読みやすい)": [
-        _f("Nunito/static/Nunito-Regular.ttf"),
+        _f("Nunito-Regular.ttf"),
     ],
     "Open Sans (スッキリ標準)": [
-        _f("Open_Sans/static/OpenSans-Regular.ttf"),
+        _f("OpenSans-Regular.ttf"),
         "/System/Library/Fonts/Supplemental/Arial.ttf",
         "C:/Windows/Fonts/arial.ttf",
     ],
