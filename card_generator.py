@@ -15,21 +15,41 @@ _UD_PATHS = [
     "C:/Windows/Fonts/UDDigitalKyokashoN-R.ttf",
 ]
 
+# fontsフォルダのパス（このファイルと同じ場所にあるfontsフォルダ）
+_FONTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
+
+def _f(filename):
+    """fontsフォルダ内のフォントファイルのパスを返す"""
+    return os.path.join(_FONTS_DIR, filename)
+
 FONT_CATALOG = {
     "UD デジタル教科書体": _UD_PATHS,
-    "Comic Sans MS (子ども向け)": [
+    "Schoolbell (学校ノート風)": [
+        _f("Schoolbell/Schoolbell-Regular.ttf"),
+    ],
+    "Comic Neue (コミック風)": [
+        _f("Comic_Neue/ComicNeue-Bold.ttf"),
+        _f("Comic_Neue/ComicNeue-Regular.ttf"),
         "/System/Library/Fonts/Supplemental/Comic Sans MS.ttf",
         "C:/Windows/Fonts/comic.ttf",
+    ],
+    "Patrick Hand (手書き風)": [
+        _f("Patrick_Hand/PatrickHand-Regular.ttf"),
+    ],
+    "Indie Flower (かわいい手書き)": [
+        _f("Indie_Flower/IndieFlower-Regular.ttf"),
+    ],
+    "Nunito (丸くて読みやすい)": [
+        _f("Nunito/static/Nunito-Regular.ttf"),
+    ],
+    "Open Sans (スッキリ標準)": [
+        _f("Open_Sans/static/OpenSans-Regular.ttf"),
+        "/System/Library/Fonts/Supplemental/Arial.ttf",
+        "C:/Windows/Fonts/arial.ttf",
     ],
     "Chalkboard (黒板風)": [
         "/System/Library/Fonts/ChalkboardSE.ttc",
         "/System/Library/Fonts/Supplemental/Chalkboard.ttc",
-    ],
-    "Bradley Hand (手書き風)": [
-        "/System/Library/Fonts/Supplemental/Bradley Hand Bold.ttf",
-    ],
-    "Noteworthy (ノート風)": [
-        "/System/Library/Fonts/Noteworthy.ttc",
     ],
     "Arial (標準)": [
         "/System/Library/Fonts/Supplemental/Arial.ttf",
@@ -42,10 +62,6 @@ FONT_CATALOG = {
     "Times New Roman (セリフ体)": [
         "/System/Library/Fonts/Supplemental/Times New Roman.ttf",
         "C:/Windows/Fonts/times.ttf",
-    ],
-    "Trebuchet MS": [
-        "/System/Library/Fonts/Supplemental/Trebuchet MS.ttf",
-        "C:/Windows/Fonts/trebuc.ttf",
     ],
     "ちはやクレヨン (クレヨン風)": [
         os.path.expanduser("~/Library/Fonts/ちはやクレヨンRE-free-.ttf"),
