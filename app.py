@@ -1,6 +1,7 @@
 import streamlit as st
 import io
 import zipfile
+from gtts import gTTS
 from card_generator import create_word_card, get_available_fonts
 
 st.set_page_config(
@@ -10,7 +11,7 @@ st.set_page_config(
 )
 
 st.title("🔤 英単語カード作成")
-st.markdown("イラスト画像と英単語を組み合わせた **5線付き学習カード** を作成します")
+st.markdown("イラスト画像と英単語を組み合わせた **4線付き学習カード** を作成します")
 
 # ── Sidebar settings ───────────────────────────────────────────────────────────
 with st.sidebar:
@@ -27,7 +28,10 @@ with st.sidebar:
     if "UD" in selected_font and available_fonts.get(selected_font) is None:
         st.warning("UD デジタル教科書体がインストールされていません。\nモリサワ公式サイトからインストールしてください。")
 
-    st.caption("💡 Comic Sans MS がおすすめです")
+    # 背景色
+    bg_color = st.color_picker("背景色", "#ffffff")
+
+    st.caption("💡 Schoolbell や Comic Neue がおすすめです")
     st.divider()
     st.markdown("""
 **使い方**
@@ -62,6 +66,7 @@ with btn_col2:
                 text=card["text"],
                 image_bytes=card["image_bytes"],
                 font_path=font_path,
+                bg_color=bg_color,
             )
         st.rerun()
 
@@ -130,12 +135,22 @@ for idx, card in enumerate(st.session_state.cards):
                 card["text"] = new_text
                 card["card_bytes"] = None
 
+            # 読み上げボタン
+            if card["text"].strip():
+                if st.button("🔊 読み上げ", key=f"tts_{cid}", use_container_width=True):
+                    tts = gTTS(text=card["text"], lang="en", slow=False)
+                    audio_fp = io.BytesIO()
+                    tts.write_to_fp(audio_fp)
+                    audio_fp.seek(0)
+                    st.audio(audio_fp, format="audio/mp3", autoplay=True)
+
             if st.button("🎨 このカードを生成", key=f"gen_{cid}", use_container_width=True):
                 font_path = available_fonts.get(selected_font)
                 card["card_bytes"] = create_word_card(
                     text=card["text"],
                     image_bytes=card["image_bytes"],
                     font_path=font_path,
+                    bg_color=bg_color,
                 )
                 st.rerun()
 
