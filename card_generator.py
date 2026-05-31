@@ -113,14 +113,11 @@ def _hline(draw, y, pad_x, color, width, dashed=False):
         draw.line([(pad_x, y), (CARD_W - pad_x, y)], fill=color, width=width)
 
 
-def create_word_card(text, image_bytes=None, font_path=None):
+def create_word_card(text, image_bytes=None, font_path=None, bg_color="white"):
     """PNG bytes for a word card. 4-line positions are derived from font metrics."""
 
-    card = Image.new("RGB", (CARD_W, CARD_H), "white")
+    card = Image.new("RGB", (CARD_W, CARD_H), bg_color)
     draw = ImageDraw.Draw(card)
-
-    # 外枠
-    draw.rectangle([0, 0, CARD_W - 1, CARD_H - 1], outline="#bbbbbb", width=2)
 
     # ── イラスト領域 ────────────────────────────────────────────────────
     img_pad = 24
@@ -130,7 +127,7 @@ def create_word_card(text, image_bytes=None, font_path=None):
             max_w = CARD_W - img_pad * 2
             max_h = IMAGE_H - img_pad * 2
             img.thumbnail((max_w, max_h), Image.LANCZOS)
-            bg = Image.new("RGB", img.size, "white")
+            bg = Image.new("RGB", img.size, bg_color)
             bg.paste(img, mask=img.split()[3])
             x = (CARD_W - img.width) // 2
             y = img_pad + (max_h - img.height) // 2
@@ -138,13 +135,9 @@ def create_word_card(text, image_bytes=None, font_path=None):
         except Exception:
             pass
 
-    # 区切り線
-    draw.line([(0, IMAGE_H), (CARD_W, IMAGE_H)], fill="#dddddd", width=2)
-
     # 罫線エリア背景
-    writing_bg = Image.new("RGB", (CARD_W, LINE_H), "#fafaf8")
+    writing_bg = Image.new("RGB", (CARD_W, LINE_H), bg_color)
     card.paste(writing_bg, (0, IMAGE_H))
-    draw.line([(0, IMAGE_H), (CARD_W, IMAGE_H)], fill="#dddddd", width=2)
 
     # ── フォント & サイズ決定 ────────────────────────────────────────────
     if not (text and text.strip()):
@@ -200,27 +193,30 @@ def create_word_card(text, image_bytes=None, font_path=None):
     actual_ascent, actual_descent, x_height = _measure_refs(font)
 
     # ── ベースライン Y 座標を決定 ─────────────────────────────────────────
-    # 上線を LINE_MARGIN に固定 → baseline_y を逆算
-    top_line_y    = IMAGE_H + LINE_MARGIN
-    baseline_y    = top_line_y + actual_ascent
+    # IMAGE_H + LINE_MARGIN を起点に baseline_y を設定
+    baseline_y    = IMAGE_H + LINE_MARGIN + actual_ascent
     bottom_line_y = baseline_y + actual_descent
 
     # 下がはみ出す場合は再縮小
     if bottom_line_y > CARD_H - LINE_MARGIN:
-        scale = (CARD_H - LINE_MARGIN - top_line_y) / (actual_ascent + actual_descent)
+        scale = (CARD_H - LINE_MARGIN - (IMAGE_H + LINE_MARGIN)) / (actual_ascent + actual_descent)
         font_size = int(font_size * scale)
         font = _load_font(font_path, font_size)
         actual_ascent, actual_descent, x_height = _measure_refs(font)
-        top_line_y    = IMAGE_H + LINE_MARGIN
-        baseline_y    = top_line_y + actual_ascent
+        baseline_y    = IMAGE_H + LINE_MARGIN + actual_ascent
         bottom_line_y = baseline_y + actual_descent
 
     xheight_line_y = baseline_y - x_height  # 破線: x-height（小文字の上端）
 
+    # 上線：テスト文字 + 入力テキストの実際の描画上端に合わせる
+    combined_asc = "tlhbdfk" + text
+    top_bbox = draw.textbbox((0, 0), combined_asc, font=font, anchor="ls")
+    top_line_y = round(baseline_y + top_bbox[1])  # top_bbox[1] は負の値（ベースライン上方）
+
     PAD_X = 40
 
     # ── 4本の罫線を描画 ─────────────────────────────────────────────────
-    _hline(draw, top_line_y,     PAD_X, "#999999", 1, dashed=False)  # 上線
+    _hline(draw, top_line_y,     PAD_X, "#999999", 1, dashed=False)  # 上線（ascender上端）
     _hline(draw, xheight_line_y, PAD_X, "#aaaaaa", 1, dashed=True)   # 破線
     _hline(draw, baseline_y,     PAD_X, "#4a90d9", 2, dashed=False)  # 青ベースライン
     _hline(draw, bottom_line_y,  PAD_X, "#999999", 1, dashed=False)  # 下線
